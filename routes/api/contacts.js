@@ -1,31 +1,36 @@
 const express = require('express');
-// const {
-//   listContacts,
-//   getContactById,
-//   addContact,
-//   removeContact,
-//   updateContact
-// } = require('../../models/contacts');
 const {
   listContactsController,
   getContactByIdController,
   addContactContoller,
   removeContactController,
-  updateContactController
+  updateContactController,
+  updateFavoriteContactController
 } = require('../../controllers/contactsControllers');
 
-const { getContactValidationMiddleware } = require('../../middleware/contactsValidationMiddlware');
+const { isExist, validateContactFields } = require('../../middleware/contactsValidationMiddlware');
 
 const router = express.Router();
 
-router.get('/', listContactsController)
+router.get('/', listContactsController);
 
-router.get('/:contactId', getContactByIdController)
+router.get('/:contactId', isExist('contactId'), getContactByIdController);
 
-router.post('/', getContactValidationMiddleware(), addContactContoller)
+router.post('/', isExist('body'), validateContactFields, addContactContoller);
 
-router.delete('/:contactId', removeContactController)
+router.delete('/:contactId', isExist('contactId'), removeContactController);
 
-router.put('/:contactId', getContactValidationMiddleware(), updateContactController)
+router.put('/:contactId',
+  isExist('contactId'),
+  isExist('body'),
+  validateContactFields,
+  updateContactController
+);
+
+router.patch('/:contactId/favorite',
+  isExist('contactId'),
+  isExist('favorite'),
+  updateFavoriteContactController
+);
 
 module.exports = router;

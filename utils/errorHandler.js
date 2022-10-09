@@ -1,8 +1,13 @@
-const errorHandlerController = (controller) =>
-    (req, res, next) =>
-        controller(req, res, next)
-            .then(data => data)
-            .catch(next);
+const errorHandlerController = (controller, { status } = { status: 200 }) =>
+    async (req, res, next) => {
+        try {
+            const result = await controller(req);
+      
+            return res.status(status).json(result);
+          } catch (error) {
+            next(error);
+          }
+    }  
 
 const errorHandlerAsync = (func) =>
     (...params) =>

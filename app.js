@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const contactsRouter = require('./routes/api/contacts');
 const { errorHandlerMiddleware } = require('./middleware/errorHandlerMiddleware');
-const { NotFoundError } = require('./models/errors');
+const { NotFoundError } = require('./errors/errors');
 
 const app = express();
 
