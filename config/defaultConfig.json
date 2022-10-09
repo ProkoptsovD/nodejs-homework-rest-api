@@ -1,3 +1,5 @@
 {
-  "mongoURI": "mongodb+srv://blog:MHObe60qDYHHhh1I@cluster0.yqs1k8p.mongodb.net/?retryWrites=true&w=majority"
+  "mongoURI": "mongodb+srv://blog:MHObe60qDYHHhh1I@cluster0.yqs1k8p.mongodb.net/?retryWrites=true&w=majority",
+  "SALT": 10,
+  "JWT_SECRET": "veryExtremelySoSoMuchSecretWord"
 }

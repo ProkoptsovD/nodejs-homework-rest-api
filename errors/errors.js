@@ -3,6 +3,8 @@ class BadRequestError extends Error {
         super();
         this.message = message;
         this.status = status;
+
+        Object.setPrototypeOf(this, BadRequestError.prototype);
     }
 };
 class NotFoundError extends Error {
@@ -10,6 +12,8 @@ class NotFoundError extends Error {
         super();
         this.message = message;
         this.status = status;
+
+        Object.setPrototypeOf(this, NotFoundError.prototype);
     }
 };
 class ValidationError extends Error {
@@ -17,6 +21,8 @@ class ValidationError extends Error {
         super();
         this.message = message;
         this.status = status;
+
+        Object.setPrototypeOf(this, ValidationError.prototype);
     }
 };
 class UnauthorizedError extends Error {
@@ -24,6 +30,8 @@ class UnauthorizedError extends Error {
         super();
         this.message = message;
         this.status = status;
+
+        Object.setPrototypeOf(this, UnauthorizedError.prototype);
     }
 };
 class ForbiddenError extends Error {
@@ -31,6 +39,17 @@ class ForbiddenError extends Error {
         super();
         this.message = message;
         this.status = status;
+
+        Object.setPrototypeOf(this, ForbiddenError.prototype);
+    }
+};
+class ConflictError extends Error {
+    constructor(message = 'Conflict', status = 409) {
+        super();
+        this.message = message;
+        this.status = status;
+
+        Object.setPrototypeOf(this, ConflictError.prototype);
     }
 };
 
@@ -39,5 +58,6 @@ module.exports = {
     NotFoundError,
     ValidationError,
     UnauthorizedError,
-    ForbiddenError
+    ForbiddenError,
+    ConflictError
 }
