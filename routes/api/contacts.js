@@ -1,25 +1,36 @@
-const express = require('express')
+const express = require('express');
+const {
+  listContactsController,
+  getContactByIdController,
+  addContactContoller,
+  removeContactController,
+  updateContactController,
+  updateFavoriteContactController
+} = require('../../controllers/contactsControllers');
 
-const router = express.Router()
+const { isExist, validateContactFields } = require('../../middleware/contactsValidationMiddlware');
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const router = express.Router();
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get('/', listContactsController);
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get('/:contactId', isExist('contactId'), getContactByIdController);
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.post('/', isExist('body'), validateContactFields, addContactContoller);
 
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.delete('/:contactId', isExist('contactId'), removeContactController);
 
-module.exports = router
+router.put('/:contactId',
+  isExist('contactId'),
+  isExist('body'),
+  validateContactFields,
+  updateContactController
+);
+
+router.patch('/:contactId/favorite',
+  isExist('contactId'),
+  isExist('favorite'),
+  updateFavoriteContactController
+);
+
+module.exports = router;
