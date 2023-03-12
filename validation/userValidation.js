@@ -7,4 +7,4 @@ const userValidationSchema = Joi.object({
 
 module.exports = {
   userValidationSchema
-}
+};

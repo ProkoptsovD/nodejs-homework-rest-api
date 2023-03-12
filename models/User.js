@@ -1,28 +1,33 @@
 const { Schema, model } = require('mongoose');
 const { encryptPassword, decryptPassword } = require('../utils/hashPassword');
 
-const userSchema = new Schema({
+const userSchema = new Schema(
+  {
     password: {
       type: String,
-      required: [true, 'Password is required'],
+      required: [true, 'Password is required']
     },
     email: {
       type: String,
       required: [true, 'Email is required'],
-      unique: true,
+      unique: true
     },
     subscription: {
       type: String,
-      enum: ["starter", "pro", "business"],
-      default: "starter"
+      enum: ['starter', 'pro', 'business'],
+      default: 'starter'
     },
     token: {
       type: String,
-      default: null,
+      default: null
+    },
+    avatarURL: {
+      type: String
+      // required: [true, 'Avatar is required']
     }
   },
   { timestamps: true }
-)
+);
 
 userSchema.pre('save', async function () {
   if (this.isNew) {
@@ -32,7 +37,7 @@ userSchema.pre('save', async function () {
 
 userSchema.methods.checkPassword = async function (password) {
   const isMatch = await decryptPassword(password, this.password);
-  
+
   return isMatch;
 };
 
