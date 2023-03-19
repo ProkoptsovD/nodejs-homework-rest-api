@@ -3,11 +3,22 @@ const path = require('path');
 const Jimp = require('jimp');
 const gravatar = require('gravatar');
 
-const { createUser, loginUser, logoutUser, getAndUpdateUser } = require('../services/userService');
+const {
+  createUser,
+  loginUser,
+  logoutUser,
+  getAndUpdateUser,
+  getUserByEmail,
+  getUserByVerificationToken,
+  updateVerificationToken
+} = require('../services/userService');
 
 const { errorHandlerController } = require('../utils/errorHandler');
-const { UnauthorizedError } = require('../errors/errors');
 const { createToken } = require('../utils/token');
+const { createVerifyEmail } = require('../utils/createVerifyEmail');
+const { sendEmail } = require('../utils/sendEmail');
+
+const { UnauthorizedError, BadRequestError, NotFoundError } = require('../errors/errors');
 
 const avatarsDir = path.join(__dirname, '../', 'public', 'avatars');
 
@@ -111,10 +122,47 @@ const updateAvatarController = async (req, res, next) => {
   }
 };
 
+const verify = async (req, res, next) => {
+  const { verificationToken } = req.params;
+  const user = await getUserByVerificationToken(verificationToken);
+
+  if (!user) {
+    return next(new NotFoundError('User not found'));
+  }
+
+  await updateVerificationToken(user._id, {
+    verify: true,
+    verificationToken: ''
+  });
+  return res.json({ message: 'Verification successful' });
+};
+
+const resendVerify = async (req, res, next) => {
+  const { email } = req.body;
+  const user = getUserByEmail(email);
+
+  if (!user) {
+    return next(new NotFoundError('User not found'));
+  }
+
+  if (user.verify) {
+    return next(new BadRequestError('User already verified'));
+  }
+
+  const mail = createVerifyEmail(email, user.verificationToken);
+  await sendEmail(mail);
+
+  return res.json({
+    message: 'Verification email sent'
+  });
+};
+
 module.exports = {
   registerUserController: errorHandlerController(registerUserController, { status: 201 }),
   loginUserController: errorHandlerController(loginUserController),
   logoutUserController: errorHandlerController(logoutUserController, { status: 204 }),
   getCurrentUserController: errorHandlerController(getCurrentUserController),
-  updateAvatarController: errorHandlerController(updateAvatarController)
+  updateAvatarController: errorHandlerController(updateAvatarController),
+  verify: errorHandlerController(verify),
+  resendVerify: errorHandlerController(resendVerify)
 };

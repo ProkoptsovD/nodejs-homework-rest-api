@@ -4,17 +4,23 @@ const {
   loginUserController,
   logoutUserController,
   getCurrentUserController,
-  updateAvatarController
+  updateAvatarController,
+  verify,
+  resendVerify
 } = require('../../controllers/usersControllers');
 const {
   isUserExists,
   validateUserFields,
-  isUserNotExist
+  isUserNotExist,
+  isValidEmail
 } = require('../../middleware/usersValidationMiddleware');
 const { authMiddleware } = require('../../middleware/authMiddleware');
 const { uploadAvatar } = require('../../middleware/uploadAvatar');
 
 const router = express.Router();
+
+router.get('/verify/:verificationToken', verify);
+router.post('/verify', isValidEmail, resendVerify);
 
 router.post('/signup', validateUserFields, isUserNotExist, registerUserController);
 router.post('/login', validateUserFields, isUserExists, loginUserController);
