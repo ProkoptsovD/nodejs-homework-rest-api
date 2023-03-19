@@ -1,4 +1,5 @@
 const { userValidationSchema } = require('../validation/userValidation');
+const { verifyEmailSchema } = require('../validation/emailValidationSchema');
 const { ValidationError, ConflictError } = require('../errors/errors');
 const User = require('../models/User');
 
@@ -45,8 +46,18 @@ const isUserNotExist = async (req, _, next) => {
   }
 };
 
+const isValidEmail = async (req, _, next) => {
+  const { error } = verifyEmailSchema.validate(req.body);
+  if (error) {
+    error.status = 400;
+    return next(error);
+  }
+  next();
+};
+
 module.exports = {
   validateUserFields,
   isUserExists,
-  isUserNotExist
+  isUserNotExist,
+  isValidEmail
 };
